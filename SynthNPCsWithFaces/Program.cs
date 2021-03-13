@@ -39,33 +39,30 @@ namespace SynthNPCsWithFaces
                     (!npc.Template.IsNull ||
                      !npc.Configuration.TemplateFlags.HasFlag(NpcConfiguration.TemplateFlag.Traits))
                     && races.ContainsKey(npc.Race.FormKey))
+                .Select(npc => npc.DeepCopy())
                 .ToArray();
             
             Console.WriteLine($"Found {npcs.Length} NPCs");
-                
-            foreach (var npc in npcs) 
-                state.PatchMod.Npcs.Add(npc.DeepCopy());
+            state.PatchMod.Npcs.Set(npcs);
+            
 
             var headParts = state.LoadOrder.PriorityOrder.HeadPart()
                 .WinningOverrides()
                 .NoStockRecords()
+                .Select(headPart => headPart.DeepCopy())
                 .ToArray();
 
             Console.WriteLine($"Found {headParts.Length} Head Parts");
-            
-            foreach (var headPart in headParts) 
-                state.PatchMod.HeadParts.Add(headPart.DeepCopy());
+            state.PatchMod.HeadParts.Set(headParts);
             
             var colors = state.LoadOrder.PriorityOrder.ColorRecord()
                 .WinningOverrides()
                 .NoStockRecords()
+                .Select(color => color.DeepCopy())
                 .ToArray();
 
             Console.WriteLine($"Found {colors.Length} Colors");
-            
-            foreach (var color in colors) 
-                state.PatchMod.Colors.Add(color.DeepCopy());
-
+            state.PatchMod.Colors.Set(colors);
         }
     }
 }
