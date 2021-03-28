@@ -15,7 +15,7 @@ namespace SynthNPCsWithFaces
             {
                 ActionsForEmptyArgs = new RunDefaultPatcher()
                 {
-                    IdentifyingModKey = "HalgariSoulGemDisenchantment.esp",
+                    IdentifyingModKey = "SynthNPCsWithFaces.esp",
                     TargetRelease = GameRelease.SkyrimSE,
                 }
             });
@@ -33,31 +33,72 @@ namespace SynthNPCsWithFaces
             
             Console.WriteLine($"Found {races.Count} races");
 
+            
+            var vanillaNPCs = state.LoadOrder.PriorityOrder
+                .TakeLast(Extensions.StockESMs.Count)
+                .Npc()
+                .WinningOverrides()
+                .ToDictionary(r => r.FormKey);
+            
             var npcs = state.LoadOrder.PriorityOrder.Npc()
                 .WinningOverrides()
                 .Where(npc =>
                     (!npc.Template.IsNull ||
                      !npc.Configuration.TemplateFlags.HasFlag(NpcConfiguration.TemplateFlag.Traits))
                     && races.ContainsKey(npc.Race.FormKey))
+                .Where(npc =>
+                {
+                    if (vanillaNPCs.TryGetValue(npc.FormKey, out var vanillaNPC))
+                    {
+                        return !npc.Equals(vanillaNPC);
+                    }
+
+                    return true;
+                })
                 .Select(npc => npc.DeepCopy())
                 .ToArray();
             
             Console.WriteLine($"Found {npcs.Length} NPCs");
             state.PatchMod.Npcs.Set(npcs);
             
+            
+            var vanillaHeadParts = state.LoadOrder.PriorityOrder
+                .TakeLast(Extensions.StockESMs.Count)
+                .HeadPart()
+                .WinningOverrides()
+                .ToDictionary(r => r.FormKey);
 
             var headParts = state.LoadOrder.PriorityOrder.HeadPart()
                 .WinningOverrides()
                 .NoStockRecords()
+                .Where(headPart =>
+                {
+                    if (vanillaHeadParts.TryGetValue(headPart.FormKey, out var vanillaHeadPart))
+                        return !vanillaHeadPart.Equals(headPart);
+                    return true;
+                })
                 .Select(headPart => headPart.DeepCopy())
                 .ToArray();
 
             Console.WriteLine($"Found {headParts.Length} Head Parts");
             state.PatchMod.HeadParts.Set(headParts);
             
+            
+            var vanillaColors = state.LoadOrder.PriorityOrder
+                .TakeLast(Extensions.StockESMs.Count)
+                .HeadPart()
+                .WinningOverrides()
+                .ToDictionary(r => r.FormKey);
+            
             var colors = state.LoadOrder.PriorityOrder.ColorRecord()
                 .WinningOverrides()
                 .NoStockRecords()
+                .Where(color =>
+                {
+                    if (vanillaColors.TryGetValue(color.FormKey, out var vanillaColor))
+                        return !vanillaColor.Equals(color);
+                    return true;
+                })
                 .Select(color => color.DeepCopy())
                 .ToArray();
 

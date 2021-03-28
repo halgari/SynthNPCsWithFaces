@@ -18,7 +18,8 @@ namespace SynthNPCsWithFaces
         public static IEnumerable<T> NoStockRecords<T>(this IEnumerable<T> records) where T : IMajorRecordGetter
         {
             Console.WriteLine($"{records.First().FormKey.ModKey.Name} {records.First().FormKey.ModKey.FileName} {records.First().FormKey.ModKey.Type}");
-            return records.Where(r => !StockESMs.Contains(r.FormKey.ModKey.FileName));
+            return records
+                .Where(r => !StockESMs.Contains(r.FormKey.ModKey.FileName));
         }
     }
 }
