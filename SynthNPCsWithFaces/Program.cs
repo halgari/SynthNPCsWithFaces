@@ -1,12 +1,3 @@
-using Mutagen.Bethesda.Plugins.Records;
-using Mutagen.Bethesda.Plugins;
-using Mutagen.Bethesda.Plugins.Order;
-using Mutagen.Bethesda.Plugins.Aspects;
-using Mutagen.Bethesda.Plugins.Cache;
-using Mutagen.Bethesda.Plugins.Exceptions;
-using Mutagen.Bethesda.Plugins.Binary;
-using Mutagen.Bethesda.Archives;
-using Mutagen.Bethesda.Strings;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
